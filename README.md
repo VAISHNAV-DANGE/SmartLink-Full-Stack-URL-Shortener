@@ -2,6 +2,7 @@
 
 A secure, multi-user URL shortening service built with Node.js, Express, and MongoDB. This application allows users to register, log in, and manage their own short links with features like QR code generation and automatic link expiration.
 
+![Project Screenshot](https://github.com/VAISHNAV-DANGE/SmartLink-Full-Stack-URL-Shortener/blob/main/public/Screenshot%202025-09-05%20145237.png?raw=true) ---
 
 ##  Key Features
 
