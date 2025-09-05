@@ -1,0 +1,494 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ShortURL-Pro</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      .qr-btn {
+  background: #333; /* Black */
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+.qr-btn:hover {
+  background: #555; /* Darker gray */
+}
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 2rem;
+        color: #333;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 3rem;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 3rem;
+        text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        letter-spacing: -0.02em;
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        margin-bottom: 2rem;
+        transition: all 0.3s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+      }
+
+      .success-message {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        text-align: center;
+        font-weight: 600;
+        box-shadow: 0 10px 25px rgba(79, 172, 254, 0.3);
+        animation: slideIn 0.5s ease-out;
+      }
+
+      .success-message .url-link {
+        color: white;
+        text-decoration: none;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+        transition: all 0.2s ease;
+        font-family: "Monaco", monospace;
+        font-size: 1.1em;
+      }
+
+      .success-message .url-link:hover {
+        border-bottom-color: white;
+      }
+
+      .form-container {
+        text-align: center;
+      }
+
+      label {
+        display: block;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #4a5568;
+        margin-bottom: 1rem;
+      }
+
+      .input-group {
+        display: flex;
+        gap: 1rem;
+        max-width: 600px;
+        margin: 0 auto;
+        align-items: stretch;
+      }
+
+      input[type="text"] {
+        flex: 1;
+        padding: 1rem 1.5rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 15px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #f8fafc;
+        outline: none;
+      }
+
+      input[type="text"]:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        background: white;
+      }
+
+      button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 15px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        min-width: 120px;
+      }
+
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      .table-container {
+        overflow-x: auto;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+      }
+
+      thead {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+
+      th,
+      td {
+        padding: 1.25rem 1.5rem;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      th {
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      tbody tr {
+        transition: all 0.2s ease;
+      }
+
+      tbody tr:hover {
+        background: #f8fafc;
+        transform: scale(1.01);
+      }
+
+      tbody tr:last-child td {
+        border-bottom: none;
+      }
+
+      .short-id {
+        font-family: "Monaco", monospace;
+        background: #e2e8f0;
+        padding: 0.25rem 0.5rem;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        color: #4a5568;
+      }
+
+      .redirect-url {
+        max-width: 300px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: #667eea;
+      }
+
+      .click-count {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-align: center;
+        min-width: 50px;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #718096;
+        font-size: 1.1rem;
+      }
+
+      .empty-state svg {
+        width: 64px;
+        height: 64px;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 768px) {
+        body {
+          padding: 1rem;
+        }
+
+        h1 {
+          font-size: 2rem;
+          margin-bottom: 2rem;
+        }
+
+        .card {
+          padding: 1.5rem;
+        }
+
+        .input-group {
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        button {
+          width: 100%;
+        }
+
+        th,
+        td {
+          padding: 1rem 0.75rem;
+          font-size: 0.9rem;
+        }
+
+        .redirect-url {
+          max-width: 150px;
+        }
+      }
+      /* Simple styles for the header and logout button */
+      .app-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 2rem;
+        background-color: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        margin: 0 auto 2rem auto;
+        max-width: 1200px;
+      }
+      .app-header .user-email {
+        color: white;
+        font-weight: 500;
+      }
+      .logout-btn {
+        background: white;
+        color: #764ba2;
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.2s ease;
+      }
+      .logout-btn:hover {
+        background: #f0f0f0;
+        transform: translateY(-2px);
+      }
+      .error-message {
+        background-color: #f56565;
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        text-align: center;
+        font-weight: 600;
+        animation: slideIn 0.5s ease-out;
+        transition: opacity 0.5s ease-in-out; /* <-- Add this line */
+      }
+      .delete-btn {
+        background: #f56565; /* Red */
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 10px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+      .form-container .input-group {
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+      }
+      .form-container .main-input {
+        display: flex;
+        width: 100%;
+        gap: 1rem;
+      }
+      .form-container select {
+        padding: 1rem;
+        border-radius: 15px;
+        border: 2px solid #e2e8f0;
+        background: #f8fafc;
+        font-size: 1rem;
+        font-weight: 500;
+        color: #4a5568;
+      }
+
+      .delete-btn:hover {
+        background: #e53e3e; /* Darker red */
+      }
+    </style>
+  </head>
+  <body>
+    <% if (locals.user) { %>
+    <header class="app-header">
+      <span class="user-email">Welcome, <%= user.email %></span>
+      <a href="/user/logout" class="logout-btn">Logout</a>
+    </header>
+    <% } %>
+    <div class="container">
+      <div class="container">
+        <h1>ShortURL Pro</h1>
+
+        <% if (locals.error) { %>
+        <div class="error-message"><%= error %></div>
+        <% } %> 
+      <% if (locals.id) { %>
+      <div class="success-message">
+        <p>✨ URL Generated Successfully!</p>
+        <a
+          href="http://localhost:8001/url/<%= id %>"
+          class="url-link"
+          target="_blank"
+        >
+          http://localhost:8001/url/<%= id %>
+        </a>
+      </div>
+      <% } %>
+
+      <div class="form-container">
+        <form method="POST" action="/url">
+          <label>Transform your long URL into something beautiful</label>
+          <div class="input-group">
+            <div class="main-input">
+              <input
+                type="text"
+                name="url"
+                placeholder="https://example.com/very/long/url"
+                required
+              />
+              <button type="submit">✨ Generate</button>
+            </div>
+
+            <div>
+              <label
+                for="expiration"
+                style="font-size: 1rem; margin-bottom: 0.5rem"
+                >Expires In:</label
+              >
+              <select name="expiration" id="expiration">
+                <option value="never" selected>Never</option>
+                <option value="1-hour">1 Hour</option>
+                <option value="1-day">1 Day</option>
+                <option value="7-days">7 Days</option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <% if (locals.urls && locals.urls.length > 0) { %>
+      <div class="card">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>No.</th>
+                <th>Short ID</th>
+                <th>Original URL</th>
+                <th>Clicks</th>
+                <th>QR Code</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% urls.forEach((url, index) => { %>
+              <tr>
+                <td><%= index + 1 %></td>
+                <td><span class="short-id"><%= url.shortid %></span></td>
+                <td>
+                  <span class="redirect-url" title="<%= url.redirectUrl %>"
+                    ><%= url.redirectUrl %></span
+                  >
+                </td>
+                <td>
+                  <span class="click-count"
+                    ><%= url.visitHistory.length %></span
+                  >
+                </td>
+                <td>
+                    <a href="/url/qrcode/<%= url.shortid %>" target="_blank" class="qr-btn">Show</a>
+                </td>
+                <td>
+                  <form
+                    method="POST"
+                    action="/url/delete/<%= url.shortid %>"
+                    style="display: inline"
+                  >
+                    <button type="submit" class="delete-btn">Delete</button>
+                  </form>
+                </td>
+              </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <% } else if (locals.urls) { %>
+      <div class="card">
+        <div class="empty-state">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.102m0-10.396l1.102-1.102a4 4 0 015.656 5.656l-4 4a4 4 0 01-5.656 0"
+            ></path>
+          </svg>
+          <p>No URLs shortened yet. Create your first short link above!</p>
+        </div>
+      </div>
+      <% } %>
+    </div>
+  </body>
+  <script>
+    const errorMessage = document.querySelector(".error-message");
+
+    if (errorMessage) {
+      setTimeout(() => {
+        errorMessage.style.opacity = "0";
+        setTimeout(() => {
+          errorMessage.style.display = "none";
+        }, 500); 
+      }, 4000);
+    }
+  </script>
+</html>
